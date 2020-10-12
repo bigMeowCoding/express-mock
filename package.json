@@ -1,0 +1,21 @@
+{
+  "name": "express-mock",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "zhouyijun",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.1.2"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --mode development --open --hot",
+    "test": "jest --watchAll",
+    "runts": "tsc && node ./dist/index.js",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "ts-loader": "^8.0.4",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
+  }
+}
