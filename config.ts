@@ -1,6 +1,7 @@
 export interface App extends Function {
   listen: Function;
   routes: Route[];
+  use: Function;
   get: (path: string, handler: Function) => void;
 }
 
@@ -9,3 +10,5 @@ export interface Route {
   method: string;
   handler: Function;
 }
+
+export const MIDDLE_WARE_METHOD = "middleware";

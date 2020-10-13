@@ -1,16 +1,40 @@
 import * as http from "http";
 import * as url from "url";
-import { App } from "./config";
+import { App, MIDDLE_WARE_METHOD } from "./config";
 
 function createApplication(): App {
   // @ts-ignore
   let app: App = function (req, res) {
-    let method = req.method.toLocaleLowerCase();
+    let httpMethod = req.method.toLocaleLowerCase();
     let { pathname } = url.parse(req.url, true);
-    app.routes.forEach((route) => {
-      if (route.method === method && route.path === pathname) {
-        route.handler(req, res);
+    let index = 0;
+    function next() {
+      if (index === app.routes.length) {
+        return;
       }
+
+      let { method, path, handler } = app.routes[index++];
+      if (method === MIDDLE_WARE_METHOD) {
+        if (path === pathname) {
+          handler(req, res, next);
+        } else {
+          next();
+        }
+      } else {
+        if (method === httpMethod && pathname === path) {
+          handler(req, res);
+        } else {
+          next();
+        }
+      }
+    }
+    next();
+  };
+  app.use = function (path, handler) {
+    app.routes.push({
+      path,
+      method: MIDDLE_WARE_METHOD,
+      handler,
     });
   };
   app.routes = [];
@@ -35,9 +59,13 @@ function createApplication(): App {
 }
 
 const app = createApplication();
-app.listen(3000, (req,res) => {
+app.listen(3000, (req, res) => {
   console.log("listen 3000");
 });
 app.get("/gettest", (req, res) => {
-  res.end('hello get test')
+  res.end("hello get test");
+});
+app.use("/test", (req, res, next) => {
+  console.log("middle");
+  next();
 });
