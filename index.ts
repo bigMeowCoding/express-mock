@@ -65,7 +65,7 @@ app.listen(3000, (req, res) => {
 app.get("/gettest", (req, res) => {
   res.end("hello get test");
 });
+
 app.use("/test", (req, res, next) => {
-  console.log("middle");
   next();
 });
