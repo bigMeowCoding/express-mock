@@ -1,10 +1,11 @@
 import * as http from "http";
 import * as url from "url";
-import { App, MIDDLE_WARE_METHOD } from "./config";
+import { MIDDLE_WARE_METHOD } from "./config";
+import { IncomingMessage, ServerResponse } from "http";
+import { App } from "./interface";
 
 function createApplication(): App {
-  // @ts-ignore
-  let app: App = function (req, res) {
+  let app = <App>function (req: IncomingMessage, res: ServerResponse) {
     let httpMethod = req.method.toLocaleLowerCase();
     let { pathname } = url.parse(req.url, true);
     let index = 0;
@@ -37,14 +38,17 @@ function createApplication(): App {
       handler,
     });
   };
+
   app.routes = [];
-  app.listen = function () {
+
+  app.listen = function (...arg) {
     // @ts-ignore
     let server = http.createServer(app);
     // arguments就是参数(3000, 'localhost', function () {})
-    server.listen(...arguments);
+    server.listen(...arg);
     return server;
   };
+
   http.METHODS.forEach((method) => {
     method = method.toLocaleLowerCase();
     app[method] = function (path: string, handler) {
@@ -55,11 +59,13 @@ function createApplication(): App {
       });
     };
   });
+
   return app;
 }
 
 const app = createApplication();
-app.listen(3000, (req, res) => {
+
+app.listen(3000, () => {
   console.log("listen 3000");
 });
 app.get("/gettest", (req, res) => {
