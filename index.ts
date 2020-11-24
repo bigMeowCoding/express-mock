@@ -42,7 +42,6 @@ function createApplication(): App {
   app.routes = [];
 
   app.listen = function (...arg) {
-    // @ts-ignore
     let server = http.createServer(app);
     // arguments就是参数(3000, 'localhost', function () {})
     server.listen(...arg);
